@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ContadorRestauranteApp",
-    "slug": "ContadorRestauranteApp",
+    "name": "CronometroApp",
+    "slug": "CronometroApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
