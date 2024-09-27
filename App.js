@@ -1,51 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-// Função para carregar citações do arquivo JSON
-const quotes = require('./assets/quotes.json'); // Carregar citações do arquivo JSON
-
-// Mapeamento de imagens para autores
-const authorImages = {
-  'Charles R. Swindoll': require('./assets/charles.jpg'),
-  'Vidal Sassoon': require('./assets/vidal.jpg'),
-  'Theodore Roosevelt': require('./assets/theodore.jpg'),
-  'Charles Darwin': require('./assets/darwin.jpg'),
-  'Winston Churchill': require('./assets/churchill.jpg'),
-  'Steve Jobs': require('./assets/stevejobs.png'),
-  'Albert Einstein': require('./assets/einstein.jpg'),
+// Função para carregar as citações do arquivo JSON
+const loadFortunes = () => {
+  // Substitua isso com a importação direta se estiver usando um bundler de assets
+  const json = require('./assets/fortunes.json');
+  return json;
 };
 
-export default function QuotesApp() {
-  const [quote, setQuote] = useState({});
-  const [loading, setLoading] = useState(false);
+const fortunes = loadFortunes(); // Carregar citações
 
-  const fetchQuote = () => {
-    setLoading(true);
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const selectedQuote = quotes[randomIndex];
-    setQuote(selectedQuote);
-    setLoading(false);
+export default function FortuneCookieApp() {
+  const [cookieBroken, setCookieBroken] = useState(false);
+  const [fortune, setFortune] = useState('');
+
+  const breakCookie = () => {
+    const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+    setFortune(randomFortune);
+    setCookieBroken(true);
   };
-
-  // Função para obter a imagem do autor
-  const getAuthorImage = (author) => authorImages[author];
 
   return (
     <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <>
-          <Text style={styles.quoteText}>"{quote.text}"</Text>
-          <Text style={styles.author}>- {quote.author}</Text>
-          {quote.author && authorImages[quote.author] && (
-            <Image source={getAuthorImage(quote.author)} style={styles.authorImage} />
-          )}
-        </>
-      )}
-      <TouchableOpacity onPress={fetchQuote} style={styles.button}>
-        <Text style={styles.buttonText}>Nova Citação</Text>
+      <Image
+        source={cookieBroken ? require('./assets/cookie_open.png') : require('./assets/cookie_closed.png')}
+        style={styles.cookie}
+      />
+      <TouchableOpacity onPress={breakCookie} style={styles.button}>
+        <Text style={styles.buttonText}>Quebrar Biscoito</Text>
       </TouchableOpacity>
+      {cookieBroken && (
+        <Text style={styles.fortune}>{fortune}</Text>
+      )}
     </View>
   );
 }
@@ -55,33 +41,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 20, // Adiciona um espaçamento ao redor do conteúdo
   },
-  quoteText: {
-    fontSize: 20,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginVertical: 20,
-    paddingHorizontal: 20,
-  },
-  author: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  authorImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 20,
+  cookie: {
+    width: 200,
+    height: 200,
   },
   button: {
+    marginTop: 20,
     padding: 10,
-    backgroundColor: '#4682B4',
+    backgroundColor: '#FF6347',
     borderRadius: 10,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
+  },
+  fortune: {
+    marginTop: 30, // Aumenta o espaço acima da frase
+    fontSize: 20,  // Aumenta o tamanho do texto
+    textAlign: 'center', // Centraliza o texto
+    color: '#333',  // Cor do texto
+    lineHeight: 30, // Define o espaçamento entre as linhas do texto
+    paddingHorizontal: 20, // Adiciona espaçamento horizontal para não ficar apertado
   },
 });
